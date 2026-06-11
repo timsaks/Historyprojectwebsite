@@ -9,6 +9,7 @@ requestAnimationFrame(() => {
 
 document.querySelectorAll(".site-nav a").forEach((link) => {
   const linkPage = link.getAttribute("href");
+
   if (linkPage === currentPage) {
     link.classList.add("active");
     link.setAttribute("aria-current", "page");
@@ -83,3 +84,68 @@ document.querySelectorAll('a[href$=".html"]').forEach((link) => {
     }, 220);
   });
 });
+
+const exhibitImages = document.querySelectorAll(".exhibit-card img");
+
+if (exhibitImages.length > 0) {
+  const lightbox = document.createElement("div");
+  lightbox.className = "image-lightbox";
+  lightbox.setAttribute("aria-hidden", "true");
+  lightbox.innerHTML = `
+    <div class="lightbox-panel" role="dialog" aria-modal="true" aria-label="Enlarged exhibit image">
+      <img src="" alt="">
+      <p class="lightbox-caption"></p>
+      <button class="lightbox-close" type="button" aria-label="Close enlarged image">X</button>
+    </div>
+  `;
+
+  document.body.appendChild(lightbox);
+
+  const lightboxImage = lightbox.querySelector("img");
+  const lightboxCaption = lightbox.querySelector(".lightbox-caption");
+  const closeButton = lightbox.querySelector(".lightbox-close");
+
+  const closeLightbox = () => {
+    lightbox.classList.remove("open");
+    lightbox.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  };
+
+  exhibitImages.forEach((image) => {
+    image.setAttribute("tabindex", "0");
+    image.setAttribute("role", "button");
+    image.setAttribute("aria-label", `Open enlarged image: ${image.alt}`);
+
+    const openLightbox = () => {
+      lightboxImage.src = image.currentSrc || image.src;
+      lightboxImage.alt = image.alt;
+      lightboxCaption.textContent = image.alt;
+      lightbox.classList.add("open");
+      lightbox.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      closeButton.focus();
+    };
+
+    image.addEventListener("click", openLightbox);
+    image.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openLightbox();
+      }
+    });
+  });
+
+  closeButton.addEventListener("click", closeLightbox);
+
+  lightbox.addEventListener("click", (event) => {
+    if (event.target === lightbox) {
+      closeLightbox();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && lightbox.classList.contains("open")) {
+      closeLightbox();
+    }
+  });
+}
