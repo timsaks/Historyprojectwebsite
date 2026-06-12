@@ -31,7 +31,7 @@ if (navToggle && siteNav) {
 }
 
 const animatedElements = document.querySelectorAll(
-  ".hero-copy, .decade-tile, .page-intro, .exhibit-card, .about-panel"
+  ".hero-copy, .decade-tile, .page-intro, .exhibit-card, .about-panel, .source-card"
 );
 
 animatedElements.forEach((element) => {
